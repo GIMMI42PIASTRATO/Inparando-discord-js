@@ -52,7 +52,7 @@ client.on("messageCreate", async (message) => {
         if (!member.bannable) return message.reply("Questo utente non può essere bannato")
             .then((msg) => msg.react("❌"))
 
-        const reason = message.substring(2, message.length - 2)
+        const reason = message.csubstring(2, message.length - 2)
         console.log(reason)
 
         let days = message.slice(-1)
@@ -60,6 +60,37 @@ client.on("messageCreate", async (message) => {
         console.log(days)
 
         member.ban({ reason: reason, days: days })
+            .then(() => {
+                const banned_member = new Discord.MessageEmbed()
+                    .setAuthor({ name: user.tag, avatar: user.displayAvatarURL() })
+                    .setColor("RED")
+                    .setDescription(`**Reason:** ${reason}\n**Moderator:** <@${message.author.id}>`)
+
+                message.reply({ embeds: [banned_member] })
+            }
+            )
+    } else if (cmd === "kick") {
+        if (message.author.bot) return
+        if (!message.member.permissions.has("KICK_MEMBERS")) return message.send("Non hai i permessi per eseguire questo comando")
+            .then((msg) => msg.react("❌"))
+
+        const user = message.mentions.users.first();
+
+        if (!user) return message.reply("Questo utente non è un membero del server")
+            .then((msg) => msg.react("❌"))
+
+        const member = message.guild.members.cache.get(user.id);
+
+
+
+
+        if (!member.kickable) return message.reply("Questo utente non può essere bannato")
+            .then((msg) => msg.react("❌"))
+
+        const reason = message.csubstring(2, message.length - 2)
+        console.log(reason)
+
+        member.kick(reason)
             .then(() => {
                 const banned_member = new Discord.MessageEmbed()
                     .setAuthor({ name: user.tag, avatar: user.displayAvatarURL() })
